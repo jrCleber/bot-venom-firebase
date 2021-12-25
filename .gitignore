@@ -1,0 +1,9 @@
+yarn-error.log
+yarn.lock
+node_modules
+keys
+dist
+tokens
+z_test.ts
+.env
+.gitignorebot-firebase.zip

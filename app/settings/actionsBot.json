@@ -1,0 +1,6 @@
+{
+    "buttonsListInit": ["Fazer um pedido","Ver o cardápio","Outras opções"],
+    "buttonsViewMenu": ["Fazer um pedido", "Voltar"],
+    "buttonsOtherOptions": ["Fazer uma recalmação","Falar com um atendente","Alterar cadastro"],
+    "buttonReturn": []
+}
