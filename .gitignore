@@ -6,4 +6,4 @@ dist
 tokens
 z_test.ts
 .env
-.gitignorebot-firebase.zip
+.gitignore
