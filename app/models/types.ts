@@ -1,3 +1,5 @@
+import {firestore} from 'firebase-admin'
+
 export type TRowsMenu = {
     title: string,
     description: string
@@ -13,6 +15,6 @@ export type TOrder = {
     title: string,
     price: number,
     description: string,
-    amount?: number,
+    quantity?: number,
     category?: string,
 }
