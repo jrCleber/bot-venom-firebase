@@ -32,6 +32,23 @@ export class AppController {
         }
     }
 
+    // recuperando documento pelo id com a cláusula where
+    async getDocumentIdWhere(
+        field: string | firestore.FieldPath,
+        opStr: firestore.WhereFilterOp,
+        value: any
+    ): Promise<firestore.DocumentData | null | undefined>{
+        try {
+            const documentReference = await this._db.collection(this.collection)
+            .where(field, opStr, value)
+            .get()
+            return documentReference.docs
+        } catch (error) {
+            console.log('Erro durante a busca - getDocumentIdWhere: ', error)
+            return null
+        }
+    }
+
     // inserção com id dinâmico
     async insertDoc(data: any): Promise<string> {
         try {
