@@ -64,6 +64,47 @@ const chatControll = new AppController(collection.collChatControll)
 // debug
 const log = (value: any) => console.log(value)
 
+// gerenciamento de ordem
+const manageOrder = {
+    async validateQuantity(message: Message, cliente: Whatsapp) {
+        // recuperando dados de status e pedidos da collection de controle
+        const documentData = await chatControll.getDocumetId(message.chatId)
+        // alocando lista de pedidos na valiável
+        let orderList: any[] = documentData?.listOrder
+        // capturando o index do último pedido configurado pelo cliente
+        const index = orderList.length - 1
+        // alocando a última orderm configurada pelo cliente
+        let order: TOrder = orderList[index]
+        // no message.body recebemos aquantidade
+        // agora checaresmos se a quantidade recebidade é realmente um número inteiro, onforme definido na regra de negócio
+        // e se esse número é maior que zero
+        if (Number.isInteger(parseInt(message.body)) && parseInt(message.body) > 0) {
+            // preenchendo a quantidade na orderm
+            order.quantity = parseInt(message.body)
+            // recolocando ordem na lista
+            orderList[index] = order
+            // salvando orden no bando
+            chatControll.insertDocWithId(message.chatId, { orderList }, false)
+            // perguntando se o cliente deseja adicionar um novo item
+            cliente.sendButtons(
+                message.from,
+                'Você deseja adcionar um novo item ao pedido?',
+                createButtons(buttons.buttonsAddItemOrder),
+                botConfig.botName
+            )
+                .then(result => {
+                    cliente.stopTyping(message.from)
+                    // alterando subestágio para addOrder
+                    chatControll.updateDoc(message.chatId, 'subState', 'addOrder', false)
+                })
+                .catch(err => console.log('Erro ao enviar - f validateQuantity: ', err))
+        } else {
+            // tratar quantidade inválida
+        }
+
+    }
+}
+
 // gerenciamento de chat
 const manageChat = {
     // iniciando o atendimento a partir de qualquer mensagem recebida
@@ -73,13 +114,14 @@ const manageChat = {
         // capturando informações de contato
         const contact = message.sender
 
+        // coletando os dados do cliente
         const data = {
             name: contact.notifyName,
-            profilePicThum: contact.profilePicThumbObj.imgFull || null,
+            // caso a propriedade 'imgFull' do ogjeto 'profilePicThumbObj', retorne um valor inválido,
+            // preencheremos o campo com uma string vazia
+            profilePicThum: contact.profilePicThumbObj.imgFull || '',
             isBusiness: contact.isBusiness
         }
-
-        log(data)
 
         // gravando dados no firebase
         // collection - person
@@ -172,7 +214,7 @@ const manageChat = {
             })
             .catch(err => console.error('Erro - f initOrder', err))
     },
-    openOrder(message: Message, client: Whatsapp) {
+    async openOrder(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // regex para validação do item de menu recebido
         const regex = new RegExp(/((^[\w\dà-ú' ]+)R\$(\d+\.\d+))\n([\wà-ú ,\.\(\)\-\+\*]+)$/i)
@@ -182,38 +224,81 @@ const manageChat = {
             // realizando o match no message.body
             const arrayMatch = message.body.match(regex)
             // preenchendo ordem
-            let order : TOrder = {
+            let order: TOrder = {
                 title: arrayMatch![2].trim(),
                 price: parseFloat(arrayMatch![3]),
                 description: arrayMatch![4]
             }
             // fazendo a varedura no menu e verificando se o item recebido existe
-            for(let i = 0; i < menuList.length; i++){
+            for (let i = 0; i < menuList.length; i++) {
                 const item = menuList[i]
-                for(let j = 0; j < item.rows.length; j++){
+                for (let j = 0; j < item.rows.length; j++) {
                     const row = item.rows[j]
-                    if(order.title === row.title && order.price === row.price && order.description === row.description){
+                    if (order.title === row.title && order.price === row.price && order.description === row.description) {
                         order.category = item.category
                         // certificando que o item existe
                         existItem = true
                         // salvando item no banco na collection de de controle de chat de forma temporal
                         // quando o pedido for finalizado, a ordem será salva na collection order
                         // os dados da collection de controle serão apagados para o início de uma nova ordem
-                        const data = {listOrder: [order]}
-                        chatControll.insertDocWithId(message.chatId, data, false)
+                        const orderList = [order]
+                        chatControll.insertDocWithId(message.chatId, { orderList }, false)
                         break
                     }
-                    if(existItem) break
+                    if (existItem) break
                 }
             }
-
             // verificando se o item existe
             // essa verificação identifica se o item foi clicado ou se o item foi digitado
-            if(existItem){
+            if (existItem) {
                 // enviar mensagem para o cliente preencher a quantidade
-            } else if (existItem === false){
+                client.sendButtons(
+                    message.from,
+                    `Digite agora a quantidade para o produto *${order.title}*\n
+                    ⚠ ATENÇÃO ⚠
+                    ❱❱❱ DIGITE UM VALOR NUMÉRICO INTEIRO
+                    ➥ Ex: 2\n
+                    Ou clique no botão e cancele o pedido.`.replace(/^ +/, ''),
+                    createButtons(buttons.buttonCancell),
+                    botConfig.botName
+                )
+                    .then(result => {
+                        client.stopTyping(message.from)
+                        // setando um substágio para o cliente
+                        // isso significa que enquanto a ordem estiver aberta {checkState: 'openOrder'}
+                        // iremos gerenciar o pedido do cliete com subestágios
+                        // o subestágio a seguir é 'quantity' => quantidade
+                        // portanto iremos validar a quantidade informada pelo cliente
+                        chatControll.insertDocWithId(message.chatId, { subState: 'validateQuantity' }, false)
+                    })
+                    .catch(err => console.log('Erro ao enviar mensagend de solicitação de quantidade\n--f openOrder: ', err))
+            } else if (existItem === false) {
                 // informar para o cliente que o item que ele digitou não se encontra nos parâmetros
+                // solicitando que o cliente escolha novamente o o item do menu
+                client.sendListMenu(
+                    message.from,
+                    botConfig.companyName.toUpperCase(),
+                    'menu',
+                    `Então🤨! Esse item que você digitou,
+                    *(* ${order.title} *)*
+                    Não existe no cardápio.\n
+                    Cique no *botão* para abrir o cadápio e selecione um item:`.replace(/^ +/, ''),
+                    'cardápio'.toUpperCase(),
+                    createListMenu()
+                )
+                    .then(result => client.stopTyping(message.from))
+                    .catch(err => console.log('Erro ao enviar menu - f openOrder: ', err))
             }
+        }
+
+        // recuperando subestágio do cliente
+        const state = await chatControll.getDocumetId(message.chatId)
+        const subState = state?.subState as keyof typeof manageOrder
+        // intanciando função no obj menageOrder
+        const orderManagement = manageOrder[subState]
+        // verificando se a referência da função é verdadeira e a executando 
+        if(orderManagement !== undefined){
+            orderManagement(message, client)
         }
     }
 }
