@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev:init": "node -r dotenv/config index.ts",
+    "dev:init": "node -r dotenv/config index.js",
     "dev": "clear && ts-node -r dotenv/config --files --transpile-only index.ts",
     "test": "clear && ts-node-dev --respawn --transpile-only -r dotenv/config z_test.ts"
   },
