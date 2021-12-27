@@ -297,7 +297,7 @@ const manageChat = {
         // intanciando função no obj menageOrder
         const orderManagement = manageOrder[subState]
         // verificando se a referência da função é verdadeira e a executando 
-        if(orderManagement !== undefined){
+        if (orderManagement !== undefined) {
             orderManagement(message, client)
         }
     }

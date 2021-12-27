@@ -55,7 +55,7 @@ export function bot() {
                         break
                     }
                 }
-                
+
                 // instanciando a função
                 const chatManagement = manageChat[command]
                 // verificando se a referência da função é verdadeira

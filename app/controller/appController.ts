@@ -37,11 +37,11 @@ export class AppController {
         field: string | firestore.FieldPath,
         opStr: firestore.WhereFilterOp,
         value: any
-    ): Promise<firestore.DocumentData | null | undefined>{
+    ): Promise<firestore.DocumentData | null | undefined> {
         try {
             const documentReference = await this._db.collection(this.collection)
-            .where(field, opStr, value)
-            .get()
+                .where(field, opStr, value)
+                .get()
             return documentReference.docs
         } catch (error) {
             console.log('Erro durante a busca - getDocumentIdWhere: ', error)
@@ -67,7 +67,7 @@ export class AppController {
     insertDocWithId(idDoc: string, data: any, insertDate = true) {
         try {
             // adicionando registro temporal no cadastro
-            if(insertDate){
+            if (insertDate) {
                 data.dateTime = firestore.Timestamp.now()
             }
             this._db.collection(this.collection).doc(idDoc).set(data)
@@ -78,11 +78,11 @@ export class AppController {
     }
 
     // atualizar um documento
-    updateDoc(idDoc: string, field: string, fieldValue: any, insertDate = true){
+    updateDoc(idDoc: string, field: string, fieldValue: any, insertDate = true) {
         try {
-            let data = {[field] : fieldValue}
+            let data = { [field]: fieldValue }
             // adicionando registro temporal no cadastro
-            if(insertDate){
+            if (insertDate) {
                 data.dateTime = firestore.Timestamp.now()
             }
             this._db.collection(this.collection).doc(idDoc).update(data)
