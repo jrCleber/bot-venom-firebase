@@ -1,0 +1,22 @@
+{
+  "name": "solid",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev:init": "node -r dotenv/config index.js",
+    "dev": "clear && ts-node -r dotenv/config --files --transpile-only index.ts",
+    "test": "clear && ts-node-dev --respawn --transpile-only -r dotenv/config z_test.ts"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "firebase-admin": "^10.0.1",
+    "uuidv4": "^6.2.12",
+    "venom-bot": "^4.0.4"
+  },
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  }
+}
