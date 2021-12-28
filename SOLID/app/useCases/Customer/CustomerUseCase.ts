@@ -1,8 +1,8 @@
 import { Customer } from "../../entities/Customer";
 import { ICustomerRepository } from "../../repository/ICustomerRepository";
-import { ICreateCustomerGetDTO } from "./CreateCustomerDTO";
+import { ICreateCustomerGetDTO } from "./CustomerDTO";
 
-export class CreateUserUseCase {
+export class CustomerUseCase {
     constructor(
         private _customerRepository: ICustomerRepository
     ) { }
