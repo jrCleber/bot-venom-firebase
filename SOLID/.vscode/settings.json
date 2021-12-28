@@ -1,0 +1,19 @@
+{
+    "editor.fontSize": 12.3,
+
+    /*MINHAS CONFIGURAÇÃOES*/
+    // "material-icon-theme.folders.associations": {
+    //     "Customer": "src",
+    //     "Order": "src",
+    //     "useCases": "job",
+    //     "repository": "resource",
+    //     "jsonConfig": "json",
+    //     "entities": "class",
+    //     "messageManager": "client",
+    //     "SOLID": "template"
+    // },
+    // "material-icon-theme.files.associations": {
+    //     "dbConn.ts": "database",
+    //     "command.ts": "command"
+    // }
+}
