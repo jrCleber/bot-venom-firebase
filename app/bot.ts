@@ -83,7 +83,7 @@ export function bot() {
                 if (check(path)){
                     log('Removendo a pasta tokens')
                     rm(path, { recursive: true }, (err) => {
-                        // esse erro nunca será mostrado, pois a fonção de remoção só será executada se o arquivo existir
+                        // esse erro nunca será mostrado, pois a função de remoção só será executada se o arquivo existir
                         if(err) console.log('A pasta não existe: ', err)
                         else log('Pasta tokens removida\n')
                     })
@@ -109,7 +109,8 @@ export function bot() {
         // realizandp a configuração da pasta tokens, caso ela não exista
         if (!check(sessionPath)) saveToken(client)
         // checando o status da conexão
-        // client.onStateChange(state => console.log('STATE SESSION: ', state))
+
+
         client.onStateChange(state => {
             console.log('STATE SESSION: ', state)
         })
