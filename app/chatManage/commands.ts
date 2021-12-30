@@ -1,7 +1,7 @@
 import { Message } from 'venom-bot'
-import options from '../settings/optionsBot.json'
+import options from '../jsonConfig/optionsBot.json'
 // relação de comandos para gerenciamento do chat
-const myCommands = {
+const initCommands = {
     initOrder(message: Message) {
         const body = message.body.toLowerCase()
         return options.order.openOrder.includes(body)
@@ -24,4 +24,20 @@ const myCommands = {
     }
 }
 
-export default myCommands
+const orderCommands = {
+    addOrder(message: Message) {
+        const body = message.body.toLowerCase()
+        return options.order.addOrder.includes(body)
+    },
+    notAdd(message: Message) {
+        const body = message.body.toLowerCase()
+        return options.notAdd.includes(body)
+    }
+}
+
+const addressCommands = {
+
+}
+
+// exportando como namespaces para facilitar a importação
+export { initCommands, orderCommands, addressCommands }

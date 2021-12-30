@@ -1,9 +1,9 @@
 import { Message, Whatsapp } from "venom-bot"
 import { opendir } from 'fs/promises'
 // importando configurações de botões
-import buttons from '../settings/actionsBot.json'
+import buttons from '../jsonConfig/actionsBot.json'
 // importando as configurações do bot
-import botConfig from '../settings/settingsBot.json'
+import botConfig from '../jsonConfig/settingsBot.json'
 // importando o controller da aplicação
 import { AppController } from "../controller/appController"
 // importando arquivo de dados, estático, para criação do menu
@@ -13,7 +13,9 @@ import collection from '../data/collectionsNames.json'
 // importando interfaces
 import { TRowsMenu, TButtons, TOrder } from '../models/types'
 // importandp firestore para tipagem
-import { database, firestore } from 'firebase-admin'
+import { firestore } from 'firebase-admin'
+// importando opções de respostas/comando
+import { orderCommands } from "./commands"
 
 // formatando botão
 function createButtons(array: string[]) {
@@ -65,6 +67,9 @@ const chatControll = new AppController(collection.collChatControll)
 
 // debug
 const log = (value: any) => console.log(value)
+
+// tipando varoável de comandos
+let command: keyof typeof manageOrder | keyof typeof orderCommands
 
 // gerenciamento de ordem
 const manageOrder = {
@@ -122,8 +127,11 @@ const manageOrder = {
     },
     // adicionando item ao pedido
     async addOrder(message: Message, cliente: Whatsapp) {
-        // chamando a função initOrder para apresentar novamente os item para o cliente
+        // chamando a função initOrder para apresentar novamente o cardápio para o cliente para o cliente
         manageChat.initOrder(message, cliente)
+    },
+    async notAdd(message: Message, cliente: Whatsapp){
+
     }
 }
 
@@ -263,6 +271,7 @@ const manageChat = {
                         // verificando se existe item noa array temp
                         const documentData = await chatControll.getDocumetId(message.chatId)
                         if (documentData?.exists) {
+                            // realizando um "push" no array temṕ orderList no banco
                             const fieldValue = firestore.FieldValue
                             chatControll.updateDoc(message.chatId, 'orderList', fieldValue.arrayUnion(order), false)
                             break
@@ -323,9 +332,17 @@ const manageChat = {
 
         // recuperando subestágio do cliente
         const state = await chatControll.getDocumetId(message.chatId)
-        const subState = state?.database().subState as keyof typeof manageOrder
+        command = state?.data().subState as keyof typeof manageOrder
+
+        // fazendo a varredura nos comandos de ordem
+        for (const [key, func] of Object.entries(orderCommands)) {
+            if(func(message)){
+                command = key as keyof typeof manageOrder | keyof typeof orderCommands
+                break
+            }
+        }
         // intanciando função no obj menageOrder
-        const orderManagement = manageOrder[subState]
+        const orderManagement = manageOrder[command]
         // verificando se a referência da função é verdadeira e a executando 
         if (orderManagement !== undefined) {
             orderManagement(message, client)
@@ -333,4 +350,5 @@ const manageChat = {
     }
 }
 
-export default manageChat
+// exportando como namespaces
+export { manageChat }
