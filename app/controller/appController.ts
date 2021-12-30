@@ -53,7 +53,7 @@ export class AppController {
     async insertDoc(data: any): Promise<string> {
         try {
             // adicionando registro temporal no cadastro
-            data.dateTime = firestore.Timestamp.now()
+            data.createAt = firestore.FieldValue.serverTimestamp()
             // retorna o id do documento gerado de forma dinâmica
             const documentReference = await this._db.collection(this.collection).add(data)
             return documentReference.id
@@ -68,7 +68,7 @@ export class AppController {
         try {
             // adicionando registro temporal no cadastro
             if (insertDate) {
-                data.dateTime = firestore.Timestamp.now()
+                data.createAt = firestore.FieldValue.serverTimestamp()
             }
             this._db.collection(this.collection).doc(idDoc).set(data)
                 .then(result => console.log('Documento inserido: ', result))
@@ -83,7 +83,7 @@ export class AppController {
             let data = { [field]: fieldValue }
             // adicionando registro temporal no cadastro
             if (insertDate) {
-                data.dateTime = firestore.Timestamp.now()
+                data.updateAt = firestore.FieldValue.serverTimestamp()
             }
             this._db.collection(this.collection).doc(idDoc).update(data)
         } catch (error) {
