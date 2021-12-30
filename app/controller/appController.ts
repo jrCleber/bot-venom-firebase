@@ -25,7 +25,7 @@ export class AppController {
     async getDocumetId(idDoc: string): Promise<firestore.DocumentData | null | undefined> {
         try {
             const documentReference = await this._db.collection(this.collection).doc(idDoc).get()
-            return documentReference.data()
+            return documentReference
         } catch (error) {
             console.log('Erro durante a busca - getDocumetId: ', error)
             return null
