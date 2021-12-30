@@ -11,7 +11,7 @@ import menuList from '../data/menuList.json'
 //importando nome das collections
 import collection from '../data/collectionsNames.json'
 // importando interfaces
-import { TRowsMenu, TButtons, TOrder } from '../models/types'
+import { TRowsMenu, TButtons, TOrder } from '../types/types'
 // importandp firestore para tipagem
 import { firestore } from 'firebase-admin'
 // importando opções de respostas/comando
