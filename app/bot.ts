@@ -7,9 +7,9 @@ import botConfig from './settings/settingsBot.json'
 //importando nome das collections
 import collection from './data/collectionsNames.json'
 // importando opções de respostas/comando
-import myCommands from './messages/commands'
+import myCommands from './chatManage/commands'
 // importando o gerenciamento de chat
-import manageChat from './messages/managementChat'
+import manageChat from './chatManage/managementChat'
 
 // tipos da mensagens que receberão tratamentos diferentes
 const arrayTypes = ['image', 'location', 'broadcast', 'ptt', 'video', 'sticker', 'document', 'vcard', 'audio']
@@ -42,7 +42,7 @@ export function bot() {
                 // recuperando estágios do cliente
                 // se o retorno for nulo, é um cliente novo
                 const chatState = await chatControll.getDocumetId(message.chatId)
-                if (chatState === null || chatState === undefined) {
+                if (chatState?.exists) {
                     command = 'initChat'
                 } else {
                     // se sim: passar as configurações de estágio do checkState
