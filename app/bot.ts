@@ -70,12 +70,12 @@ export function bot() {
     create(
         // nome da sessão
         botConfig.baseName,
-        // catchQr - passarei esse parâmetro como indefinido - não enviarei o qr code para lugar algum
+        // recuperando dados do qr code, se existir
         (base64Qr, asciiQR, attempts, urlCode) => {
             /*
                 se o valor da variável base64Qr for verdadeiro, significa que o usuário se
                 desconectou no smartphone, nesse caso podemos excluir a pasta token, se ela existrir,
-                e salvar novas configurações de browsertoken
+                e salvar as novas configurações de browsertoken
             */
             if (base64Qr){
                 log('Aparelho desconectado')
