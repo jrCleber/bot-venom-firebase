@@ -4,6 +4,7 @@ node_modules
 keys
 dist
 tokens
-z_test.ts
 .env
+tests
+z_tests
 .gitignore
