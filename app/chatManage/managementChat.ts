@@ -11,11 +11,13 @@ import menuList from '../data/menuList.json'
 //importando nome das collections
 import collection from '../data/collectionsNames.json'
 // importando interfaces
-import { TRowsMenu, TButtons, TOrder } from '../types/types'
+import { TRowsMenu, TButtons, TOrder, TAddress } from '../types/types'
 // importandp firestore para tipagem
 import { firestore } from 'firebase-admin'
 // importando opções de respostas/comando
 import { orderCommands } from "./commands"
+// importando sync-request para busca de cep
+import request from 'sync-request'
 
 // formatando botão
 function createButtons(array: string[]) {
@@ -52,6 +54,31 @@ function createListMenu() {
     })
 }
 
+// função que exibe para o cliente a evolução e finalização do pedido
+async function displayOrder(id: string) {
+    let totalOrder = 0.0
+    let textOrder = ''
+    // recuperando dados do cliente
+    const documentReference = await chatControll.getDocumetId(id)
+    const orderList: TOrder[] = documentReference?.data().orderList
+    const address: TAddress = documentReference?.data().address
+    // montando display
+    orderList.forEach((order: TOrder) => {
+        totalOrder += order.quantity! * order.price
+        textOrder += '```' + order.title + '```\n'
+        textOrder += '```' + order.quantity + 'x' + order.price.toLocaleString('us', { style: 'currency', currency: 'BRL' })
+        textOrder += ' = ' + (order.quantity! * order.price).toLocaleString('us', { style: 'currency', currency: 'BRL' }) + '```\n'
+    })
+    textOrder += `total do pedido *${totalOrder.toLocaleString('us', { style: 'currency', currency: 'BRL' })}*`
+    if (address) {
+        textOrder += `\n\n*cidade:* ${address.city}
+        *bairro:* ${address.distryct}
+        *rua/localização:* ${address.publicPlace}
+        'número:* ${address.number}`
+    }
+    return textOrder
+}
+
 function seeTyping(client: Whatsapp, from: string) {
     client.sendSeen(from)
     client.startTyping(from)
@@ -74,13 +101,13 @@ let command: keyof typeof manageOrder | keyof typeof orderCommands
 // gerenciamento de ordem
 const manageOrder = {
     // validando a quantidade
-    async validateQuantity(message: Message, cliente: Whatsapp) {
+    async validateQuantity(message: Message, client: Whatsapp) {
         // enviando visualização
-        seeTyping(cliente, message.from)
+        seeTyping(client, message.from)
         // recuperando dados de status e pedidos da collection de controle
         const documentData = await chatControll.getDocumetId(message.chatId)
         // alocando lista de pedidos na valiável
-        let orderList: TOrder[] = documentData?.data().listOrder
+        let orderList: TOrder[] = documentData?.data().orderList
         // capturando o index do último pedido configurado pelo cliente
         const index = orderList.length - 1
         // alocando a última orderm configurada pelo cliente
@@ -96,21 +123,21 @@ const manageOrder = {
             // salvando orden no bando
             chatControll.insertDocWithId(message.chatId, { orderList }, false)
             // perguntando se o cliente deseja adicionar um novo item
-            cliente.sendButtons(
+            client.sendButtons(
                 message.from,
                 'Você deseja adcionar um novo item ao pedido?',
                 createButtons(buttons.buttonsAddItemOrder),
                 botConfig.botName
             )
                 .then(result => {
-                    cliente.stopTyping(message.from)
+                    client.stopTyping(message.from)
                     // alterando subestágio para addOrder
                     chatControll.updateDoc(message.chatId, 'subState', 'addOrder', false)
                 })
                 .catch(err => console.log('Erro ao enviar - f validateQuantity - true: ', err))
         } else {
             // informando para o cliente que a quantidade digitada é inválida
-            cliente.sendButtons(
+            client.sendButtons(
                 message.from,
                 `Então🤨! A quantidade digitada para o produto *${order.title}* deve ser um número, e deve ser  maior que zero.\n
                 ⚠ *ATENÇÃO* ⚠
@@ -120,18 +147,60 @@ const manageOrder = {
                 createButtons(buttons.buttonCancell),
                 botConfig.botName
             )
-                .then(result => cliente.stopTyping(message.from))
+                .then(result => client.stopTyping(message.from))
                 .catch(err => console.log('Erro ao enviar - f validateQuantity - false: ', err))
         }
 
     },
     // adicionando item ao pedido
-    async addOrder(message: Message, cliente: Whatsapp) {
+    async addOrder(message: Message, client: Whatsapp) {
         // chamando a função initOrder para apresentar novamente o cardápio para o cliente para o cliente
-        manageChat.initOrder(message, cliente)
+        manageChat.initOrder(message, client)
     },
-    async notAdd(message: Message, cliente: Whatsapp){
+    // o cliente decidiu não adicionar mais algum item ao pedido
+    // exibir resumo do pedido
+    async notAdd(message: Message, client: Whatsapp) {
+        // o cliente não deseja mais adicionar itens
+        // apresentar a evolução do pedido até o momento
+        const textOrder = `produtos\n\n${await displayOrder(message.chatId)}`.toUpperCase().replace(/^ +/, '')
+        client.sendButtons(
+            message.from,
+            textOrder,
+            createButtons(buttons.buttonsOrder),
+            botConfig.botName
+        )
+            .then(result => client.stopTyping(message.from))
+            .catch(err => console.log('Erro ao enviar - f notAdd: ', err))
+    },
+    okOrder(message: Message, client: Whatsapp) {
+        client.sendText(message.from, 'Ótimo😉!\nEntão vamos começão a cadastrar o seu endereço.')
+            .then(result => {
+                client.sendText(message.from, 'Digite o seu *CEP:*')
+                    .then(result => client.stopTyping(message.from))
+                    .catch(err => console.log('Erro ao enviar - f okOrder: ', err))
+            })
+            .catch(err => console.log('Erro ao enviar - f okOrder: ', err))
+    }
+}
 
+// gerenciamento de endereço
+const manageAddress = {
+    // checando o cep e salvando
+    checkZipCode(message: Message, client: Whatsapp) {
+        // tratar o body antes de passar como parâmetro na string
+        const zipCode = message.body
+        // completando string
+        const host = `https://viacep.com.br/ws/${zipCode}/json/`
+        // recuperando dados com o método GET
+        const res = request('GET', host)
+        // verificando se o CEP é válido
+        if (!res.isError()) {
+            const body = JSON.parse(res.body.toString('utf-8'))
+            console.log(body)
+        } else {
+            // cep não encontrado
+            console.log('Cep não encontrado')
+        }
     }
 }
 
@@ -271,7 +340,7 @@ const manageChat = {
                         // verificando se existe item noa array temp
                         const documentData = await chatControll.getDocumetId(message.chatId)
                         if (documentData?.exists) {
-                            // realizando um "push" no array temṕ orderList no banco
+                            // realizando um "push" no array temp orderList no banco
                             const fieldValue = firestore.FieldValue
                             chatControll.updateDoc(message.chatId, 'orderList', fieldValue.arrayUnion(order), false)
                             break
@@ -336,7 +405,7 @@ const manageChat = {
 
         // fazendo a varredura nos comandos de ordem
         for (const [key, func] of Object.entries(orderCommands)) {
-            if(func(message)){
+            if (func(message)) {
                 command = key as keyof typeof manageOrder | keyof typeof orderCommands
                 break
             }

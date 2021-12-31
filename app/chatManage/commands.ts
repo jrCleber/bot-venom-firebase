@@ -32,6 +32,10 @@ const orderCommands = {
     notAdd(message: Message) {
         const body = message.body.toLowerCase()
         return options.notAdd.includes(body)
+    },
+    okOrder(message: Message) {
+        const body = message.body.toLowerCase()
+        return options.order.okOrder.includes(body)
     }
 }
 
