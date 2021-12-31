@@ -1,5 +1,3 @@
-import { firestore } from 'firebase-admin'
-
 export type TRowsMenu = {
     title: string,
     description: string
