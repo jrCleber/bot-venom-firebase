@@ -3,5 +3,6 @@
     "buttonsViewMenu": ["Fazer um pedido", "Voltar"],
     "buttonsOtherOptions": ["Fazer uma recalmação","Falar com um atendente","Alterar cadastro"],
     "buttonCancell": ["Cancelar o pedido"],
-    "buttonsAddItemOrder": ["Adicionar item", "Não adicionar"]
+    "buttonsAddItemOrder": ["Adicionar item", "Não adicionar"],
+    "buttonsOrder": ["Pedido ok","Editar o pedido", "Cencelar o pedido"]
 }
