@@ -110,13 +110,10 @@ export function bot() {
         if (!check(sessionPath)) saveToken(client)
         // checando o status da conexão
 
-
+        // esta função não está funcionando
         client.onStateChange(state => {
             console.log('STATE SESSION: ', state)
         })
-
-        const contacts = await client.getAllContacts()
-        log(contacts)
 
         client.onMessage(async message => {
             log(message)
