@@ -13,7 +13,6 @@ import { manageChat } from './chatManage/managementChat'
 // importando funções para manipulação de aruivos no sistema
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync, readFileSync, rm } from 'fs'
-
 // tipos da mensagens que receberão tratamentos diferentes
 const arrayTypes = ['image', 'location', 'broadcast', 'ptt', 'video', 'sticker', 'document', 'vcard', 'audio']
 
@@ -56,7 +55,8 @@ function readToken() {
     } catch (error) {
         console.log({
             status: 404,
-            message: 'o arquivo token não existe.\nCriando arquivo token'
+            message: 'o arquivo token não existe.\nCriando arquivo token',
+            error: error
         })
     }
 }
@@ -92,8 +92,8 @@ export function bot() {
         },
         // status da sessão
         (statusSession, sessionName) => {
-            console.log('Status Session: ', statusSession)
-            console.log('Session Name: ', sessionName)
+            console.log('STATUS SESSION: ', statusSession)
+            console.log('SESSION NAME: ', sessionName)
         },
         // opçoes de criação
         {
@@ -114,6 +114,9 @@ export function bot() {
         client.onStateChange(state => {
             console.log('STATE SESSION: ', state)
         })
+
+        const contacts = await client.getAllContacts()
+        log(contacts)
 
         client.onMessage(async message => {
             log(message)
