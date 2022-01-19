@@ -27,11 +27,11 @@ Esta aplicação tem como objetivo o atendimento automatizado e o gerenciamento 
     * com o **npm**, execute o comando: ```npm install```
 4. para iniciar o aplicativo:
     * com o **yarn** execute: ```yarn start:app```
-    * com o **npm** execute: ```npm run start:app```&nbsp;
+    * com o **npm** execute: ```npm run start:app```<br/>
     ↳ ambos os comandos acima irão criar transpilar o código, o salvando na pasta dist
     * ```yarn dev``` ou ```npm run dev``` irão executar o código no modo desenvolvedor; com a transpilação do código em tempo de execução    
 5. Tudo certo agora. **DIVIRTA-SE**!
 <hr>
 
 Essa aplicação não realiza o gerenciamento de pagamentos, roteamentos para atendentes e edições em gerais.
-&nbsp;
+<br/>
