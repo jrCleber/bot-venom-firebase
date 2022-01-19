@@ -130,8 +130,10 @@ const manageOrder = {
             const index = orderList.length - 1
             // alocando a última orderm configurada pelo cliente
             let order: TOrder = orderList[index]
-            /*  OBS: no firebase ainda não é possível atualizar um item no array, ou removemos ou adicionamos.
-                por isso vamos remover do banco o objeto order capturado em orderList  */
+            /**
+             * OBS: no firebase ainda não é possível atualizar um item no array, ou removemos ou adicionamos.
+             * por isso vamos remover do banco o objeto order capturado em orderList
+             */
             await chatControll.updateDoc(message.chatId, Field.tempOrderList, fieldValue.arrayRemove(order), false)
             // preenchendo a quantidade na orderm
             order.quantity = parseInt(message.body)
@@ -170,9 +172,11 @@ const manageOrder = {
     // adicionando item ao pedido
     async addOrder(message: Message, client: Whatsapp) {
         // chamando a função initOrder para apresentar novamente o cardápio para o cliente para o cliente
-        /* nesse estágio do atendimento, o subestágio do cliente ainda estará como 'addOrder'.
-           Por isso, quando o cliente escolher um novo item para adicionar ao pedido, esta função será executada novamente.
-           Precisamos, neste ponto alterar o subestágio do cliente para nulo ou vazio  */
+        /**
+         * nesse estágio do atendimento, o subestágio do cliente ainda estará como 'addOrder'.
+         * Por isso, quando o cliente escolher um novo item para adicionar ao pedido, esta função será executada novamente.
+         * Precisamos, neste ponto alterar o subestágio do cliente para nulo ou vazio
+         */
         manageChat.initOrder(message, client, true)
         // atualizando subestágio do cliente
         chatControll.updateDoc(message.from, Field.subState, null, false)
@@ -235,9 +239,11 @@ const manageAddress = {
                             let address: TAddress = {}
                             // pegando a cidade
                             address.city = cep.localidade
-                            /*  se o atributo bairro da variável cep estiver vazio,
-                                os outros atributos também estarão. portanto podemos setar o subestágio
-                                do atendimento como 'aguardando bairro' */
+                            /**
+                             * se o atributo bairro da variável cep estiver vazio,
+                             * os outros atributos também estarão. portanto podemos setar o subestágio
+                             * do atendimento como 'aguardando bairro'
+                             */
                             let sendMessage: string
                             if (cep.bairro === '') {
                                 sendMessage = `*Cidade:* ${address.city}\n
@@ -377,16 +383,22 @@ const manageChat = {
         // coletando os dados do cliente
         const data = {
             name: contact.notifyName,
-            // caso a propriedade 'imgFull' do objeto 'profilePicThumbObj', retorne um valor inválido,
-            // preencheremos o campo com uma string vazia
+            /**
+             * caso a propriedade 'imgFull' do objeto 'profilePicThumbObj', retorne um valor inválido,
+             * preencheremos o campo com uma string vazia
+             */
             profilePicThum: contact.profilePicThumbObj.imgFull ? contact.profilePicThumbObj.imgFull : '',
             isBusiness: contact.isBusiness
         }
-        // gravando dados no firebase
-        // collection - person
+        /**
+         * gravando dados no firebase
+         * collection - person
+         */
         customerControll.insertDocWithId(contact.id, data)
-        // setando estágio do cliente
-        // collection - chatControll
+        /**
+         * setando estágio do cliente
+         * collection - chatControll
+         */
         const state = { codeState: 'initChat' }
         chatControll.insertDocWithId(message.chatId, state, false)
         client.sendButtons(
@@ -484,10 +496,12 @@ const manageChat = {
         if (message.type === 'list_response') {
             // alocando item clicado pelo cliente na variável listResponse
             const listResponse = message.listResponse
-            /* verificando se o item existe na base de dados.
-               a base de dados aqui é representada pela pasta data.
-               se o item existir na base, a variável itemSelected receberá os atributos do produto,
-               se o item não existir na base, a variável itemSelected receberá um valor undefined === false */
+            /**
+             * verificando se o item existe na base de dados.
+             * a base de dados aqui é representada pela pasta data.
+             * se o item existir na base, a variável itemSelected receberá os atributos do produto,
+             * se o item não existir na base, a variável itemSelected receberá um valor undefined === false
+             */
             // pesquisando item na base
             const itemSelected = menuList.find(item => item.id === listResponse.singleSelectReply.selectedRowId)
             // validando mensagem recebidat
@@ -499,10 +513,12 @@ const manageChat = {
                     description: itemSelected.description,
                     category: itemSelected.category
                 }
-                /*  realizando um "push" no array temp orderList no banco
-                    salvando item no banco na collection de de controle de chat de forma temporal
-                    quando o pedido for finalizado, a ordem será salva na collection order
-                    os dados da collection de controle serão apagados para o início de uma nova ordem  */
+                /**
+                 * realizando um "push" no array temp orderList no banco
+                 * salvando item no banco na collection de de controle de chat de forma temporal
+                 * quando o pedido for finalizado, a ordem será salva na collection order
+                 * os dados da collection de controle serão apagados para o início de uma nova ordem
+                 */
                 chatControll.updateDoc(message.chatId, Field.tempOrderList, fieldValue.arrayUnion(order), false)
                 // enviar mensagem para o cliente preencher a quantidade
                 client.sendButtons(
@@ -517,11 +533,13 @@ const manageChat = {
                 )
                     .then(result => {
                         client.stopTyping(message.from)
-                        /* setando um substágio para o cliente
-                           isso significa que enquanto a ordem estiver aberta {checkState: 'openOrder'}
-                           iremos gerenciar o pedido do cliete com subestágios
-                           o subestágio a seguir é 'quantity' => quantidade
-                           portanto iremos validar a quantidade informada pelo cliente  */
+                        /**
+                         * setando um substágio para o cliente
+                         * isso significa que enquanto a ordem estiver aberta { checkState: 'openOrder' }
+                         * iremos gerenciar o pedido do cliete com subestágios
+                         * o subestágio a seguir é 'quantity' => quantidade
+                         * portanto iremos validar a quantidade informada pelo cliente
+                         */
                         chatControll.updateDoc(message.chatId, Field.subState, 'validateQuantity', false)
                     })
                     .catch(err => console.log('Erro ao enviar mensagend de solicitação de quantidade\n--f openOrder: ', err))
@@ -548,8 +566,10 @@ const manageChat = {
         } else {
             // informando ao cliente que o item não existe
             if (itemSelected === undefined) {
-                // informar para o cliente que o item que ele digitou não se encontra nos parâmetros
-                // solicitando que o cliente escolha novamente o o item do menu
+                /**
+                 * informar para o cliente que o item que ele digitou não se encontra nos parâmetros
+                 * solicitando que o cliente escolha novamente o o item do menu
+                 */
                 client.sendListMenu(
                     message.from,
                     botConfig.companyName.toUpperCase(),
