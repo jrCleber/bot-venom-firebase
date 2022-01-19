@@ -482,7 +482,7 @@ const manageChat = {
         }
         // verificando se o objeto da emnsagem recebida é do tipo list_response
         if(message.type === 'list_response'){
-            // alocando item clicado pelo cliente na variável listResponse
+        // alocando item clicado pelo cliente na variável listResponse
         const listResponse = message.listResponse
         /* verificando se o item existe na base de dados.
            a base de dados aqui é representada pela pasta data.
