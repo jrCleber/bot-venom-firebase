@@ -490,7 +490,6 @@ const manageChat = {
            se o item não existir na base, a variável itemSelected receberá um valor undefined === false */
         // pesquisando item na base
         const itemSelected = menuList.find(item => item.id === listResponse.singleSelectReply.selectedRowId)
-        log({ itemSelected })
         // validando mensagem recebidat
         if (itemSelected) {
             // preenchendo ordem
