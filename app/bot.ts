@@ -23,7 +23,6 @@ let command: keyof typeof manageChat
 
 // instanciando controller que gerenciará a collection de estágios do cliente
 const chatControll = new AppController(collection.collChatControll)
-
 // debug
 const log = (value: any) => console.log(value)
 
@@ -36,13 +35,17 @@ const sessionPath = `${path}/${botConfig.baseName}.json`
 
 // salvar arquivo token
 async function saveToken(client: Whatsapp) {
-    /*  verificandp se a pasta tokens existe;
-        se não existir ela será criada  */
+    /**
+     * verificandp se a pasta tokens existe;
+     * se não existir ela será criada
+     */
     if (!check(path)) await mkdir(path)
     // recuperando o token da sessão do navegador
     const browserSessionToken = await client.getSessionTokenBrowser()
-    /*  verificando se a sessão existe;
-        se não existir a variável browserSessionToken será escrita na pasta */
+    /**
+     * verificando se a sessão existe;
+     * se não existir a variável browserSessionToken será escrita na pasta
+     */
     if (!check(sessionPath)) writeFile(sessionPath, JSON.stringify(browserSessionToken))
 }
 // ler arquivo token
@@ -67,9 +70,11 @@ export function bot() {
         botConfig.baseName,
         // recuperando dados do qr code, se existir.
         (base64Qr, asciiQR, attempts, urlCode) => {
-            /*  se o valor da variável base64Qr for verdadeiro, significa que o usuário se
-                desconectou no smartphone, nesse caso podemos excluir a pasta token, se ela existrir,
-                e salvar as novas configurações de browsertoken  */
+            /**
+             * se o valor da variável base64Qr for verdadeiro, significa que o usuário se
+             * desconectou no smartphone, nesse caso podemos excluir a pasta token, se ela existrir,
+             * e salvar as novas configurações de browsertoken
+             */
             /* GANBIARRA FUNCIONAL */
             if (base64Qr) {
                 log('Aparelho desconectado')
@@ -100,16 +105,9 @@ export function bot() {
     async function run(client: Whatsapp) {
         // realizandp a configuração da pasta tokens, caso ela não exista
         if (!check(sessionPath)) saveToken(client)
-
-        // checando o status da conexão
-        // esta função não está funcionando
-        client.onStateChange(state => {
-            console.log('STATE SESSION: ', state)
-        })
-
         // ouvindo todas as mensagens que são recebidas
         client.onMessage(async message => {
-            // log(message)
+            log(message)
             // verificando se o tipo da mensagem não está incluso nop arraytypes
             if (arrayTypes.includes(message.type) === false && message.isGroupMsg === false && message.hasOwnProperty('body')) {
                 // referenciando o documento de estágios do cliente
@@ -124,13 +122,17 @@ export function bot() {
                     // se não: passar o comando de início de chat
                     command = 'initChat'
                 }
-                /*  fazendo a varredura para verificar se o comando existe na lista de comandos
-                    caso os estágios do cliente estejam zerados no banco.
-                    isso acontece, pois no final do atendimento, os estágios do cliente serão reiniciados no banco,
-                    ou quando o cliente estiver em algum subestágio do atendimento  */
+                /**
+                 * fazendo a varredura para verificar se o comando existe na lista de comandos
+                 * caso os estágios do cliente estejam zerados no banco.
+                 * isso acontece, pois no final do atendimento, os estágios do cliente serão reiniciados no banco,
+                 * ou quando o cliente estiver em algum subestágio do atendimento
+                 */
                 for (const [key, func] of Object.entries(initCommands)) {
-                    /*  verificando se o cliente enviou algum comando válido e atribuindo o comando na variável command
-                        se não, mantém-se o valor da variável command do bloco if */
+                    /**
+                     * verificando se o cliente enviou algum comando válido e atribuindo o comando na variável command
+                     * se não, mantém-se o valor da variável command do bloco if
+                     */
                     if (func(message) === true) {
                         command = key as keyof typeof manageChat
                         break
