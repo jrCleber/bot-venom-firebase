@@ -23,17 +23,29 @@ let command: keyof typeof manageChat
 
 // instanciando controller que gerenciará a collection de estágios do cliente
 const chatControll = new AppController(collection.collChatControll)
-// debug
+
+/**
+ * debug
+ * @param value 
+ * @returns 
+ */
 const log = (value: any) => console.log(value)
 
-// checagem de caminhos
+/**
+ * checagem de caminhos
+ * @param path 
+ * @returns 
+ */
 const check = (path: string) => existsSync(path)
 // definindo pasta padrão para checagen de tokens
 const path = './tokens'
 // definindo arquivo padrão para checagem de token
 const sessionPath = `${path}/${botConfig.baseName}.json`
 
-// salvar arquivo token
+/**
+ * salvar arquivo token
+ * @param client 
+ */
 async function saveToken(client: Whatsapp) {
     /**
      * verificandp se a pasta tokens existe;
@@ -48,7 +60,10 @@ async function saveToken(client: Whatsapp) {
      */
     if (!check(sessionPath)) writeFile(sessionPath, JSON.stringify(browserSessionToken))
 }
-// ler arquivo token
+/**
+ * ler arquivo token
+ * @returns 
+ */
 function readToken() {
     try {
         return JSON.parse(readFileSync(sessionPath, 'utf-8'))
@@ -59,7 +74,9 @@ function readToken() {
         })
     }
 }
-/* MULTDEVICE FALSE */
+/**
+ * CRIANDO O BOT COM O MULTDEVICE FALSE
+ */
 export function bot() {
     // lendo arquivo token
     const token = readToken()
@@ -101,7 +118,10 @@ export function bot() {
     )
         .then(client => run(client))
         .catch(err => console.log('Erro ao criar a sessão'))
-
+    /**
+     * iniciando o bot
+     * @param client 
+     */
     async function run(client: Whatsapp) {
         // realizandp a configuração da pasta tokens, caso ela não exista
         if (!check(sessionPath)) saveToken(client)
@@ -113,7 +133,7 @@ export function bot() {
                 // referenciando o documento de estágios do cliente
                 const documentReference = await chatControll.getDocumetId(message.chatId)
                 // alocando dados do documento
-                const documentData = documentReference?.data() 
+                const documentData = documentReference?.data()
                 // verificando se o documento está vazio
                 if (documentReference?.exists) {
                     // se sim: passar as configurações de estágio do checkState
