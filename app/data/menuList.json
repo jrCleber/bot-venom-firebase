@@ -1,0 +1,72 @@
+[
+   {
+      "title": "Velociraptor",
+      "description": "Pão brioche, carne artesanal, bacon, ovo, mussarela, catupiry, molho jurássic, picles, cebola, tomate.",
+      "price": 32.90,
+      "category": "hamburguer",
+      "id": "id1"
+   },
+   {
+      "title": "Braquiossauro",
+      "description": "Pão australiano, carne artesanal ,catupiry, crispy de mussarela, rúcula, mostarda e mel, molho green, tomate e cebola roxa.",
+      "price": 28.90,
+      "category": "hamburguer",
+      "id": "id2"
+   },
+   {
+      "title": "Denversauro",
+      "description": "Pão com gergelim, carne artesanal, cheddar, molho jurássic, mostarda e mel,alface, tomate e picles.",
+      "price": 24.90,
+      "category": "hamburguer",
+      "id": "id3"
+   },
+   {
+      "title": "Fritas Tradicional",
+      "description": "Fritas",
+      "price": 6.99,
+      "category": "fritas",
+      "id": "id4"
+   },
+   {
+      "title": "Fritas com Cheddar",
+      "description": "Fritas",
+      "price": 7.99,
+      "category": "fritas",
+      "id": "id5"
+   },
+   {
+      "title": "Fritas com Cheddar e Bacon",
+      "description": "Fritas",
+      "price": 8.99,
+      "category": "fritas",
+      "id": "id6"
+   },
+   {
+      "title": "Guarana Antartica",
+      "description": "pet 1.5L",
+      "price": 8.00,
+      "category": "bebidas",
+      "id": "id7"
+   },
+   {
+      "title": "Coca Cola",
+      "description": "pet 2L",
+      "price": 10.00,
+      "category": "bebidas",
+      "id": "id8"
+   },
+   {
+      "title": "Guarana Antartica",
+      "description": "lata 350ml",
+      "price": 6.00,
+      "category": "bebidas",
+      "id": "id9"
+   },
+   {
+      "title": "Coca Cola",
+      "description": "lata 350ml",
+      "price": 6.00,
+      "category": "bebidas",
+      "id": "id10"
+   }
+]
