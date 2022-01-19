@@ -31,7 +31,7 @@ const initCommands = {
         return options.cancel.includes(body)
     }
 }
-
+// relação de comandos para gerenciamento de ordem
 const orderCommands = {
     addOrder(message: Message) {
         const body = message.body.toLowerCase()
