@@ -1,0 +1,25 @@
+{
+  "name": "bot-firebase",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start:app": "tsc && node -r dotenv/config ./dist/index.js",
+    "dev": "clear && ts-node -r dotenv/config --files --transpile-only index.ts",
+    "test": "clear && tsnd --respawn --transpile-only -r dotenv/config --ignore-watch node_modules ./test.ts"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "events": "^3.3.0",
+    "firebase-admin": "^10.0.1",
+    "sync-request": "^6.1.0",
+    "venom-bot": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/events": "^3.0.0",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.4"
+  }
+}
