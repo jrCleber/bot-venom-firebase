@@ -481,51 +481,51 @@ const manageChat = {
             description: ''
         }
         // verificando se o objeto da emnsagem recebida é do tipo list_response
-        if(message.type === 'list_response'){
-        // alocando item clicado pelo cliente na variável listResponse
-        const listResponse = message.listResponse
-        /* verificando se o item existe na base de dados.
-           a base de dados aqui é representada pela pasta data.
-           se o item existir na base, a variável itemSelected receberá os atributos do produto,
-           se o item não existir na base, a variável itemSelected receberá um valor undefined === false */
-        // pesquisando item na base
-        const itemSelected = menuList.find(item => item.id === listResponse.singleSelectReply.selectedRowId)
-        // validando mensagem recebidat
-        if (itemSelected) {
-            // preenchendo ordem
-            let order: TOrder = {
-                title: itemSelected.title,
-                price: itemSelected.price,
-                description: itemSelected.description,
-                category: itemSelected.category
-            }
-            /*  realizando um "push" no array temp orderList no banco
-                salvando item no banco na collection de de controle de chat de forma temporal
-                quando o pedido for finalizado, a ordem será salva na collection order
-                os dados da collection de controle serão apagados para o início de uma nova ordem  */
-            chatControll.updateDoc(message.chatId, Field.tempOrderList, fieldValue.arrayUnion(order), false)
-            // enviar mensagem para o cliente preencher a quantidade
-            client.sendButtons(
-                message.from,
-                `Digite agora a quantidade para o produto *${order.title}*\n
+        if (message.type === 'list_response') {
+            // alocando item clicado pelo cliente na variável listResponse
+            const listResponse = message.listResponse
+            /* verificando se o item existe na base de dados.
+               a base de dados aqui é representada pela pasta data.
+               se o item existir na base, a variável itemSelected receberá os atributos do produto,
+               se o item não existir na base, a variável itemSelected receberá um valor undefined === false */
+            // pesquisando item na base
+            const itemSelected = menuList.find(item => item.id === listResponse.singleSelectReply.selectedRowId)
+            // validando mensagem recebidat
+            if (itemSelected) {
+                // preenchendo ordem
+                let order: TOrder = {
+                    title: itemSelected.title,
+                    price: itemSelected.price,
+                    description: itemSelected.description,
+                    category: itemSelected.category
+                }
+                /*  realizando um "push" no array temp orderList no banco
+                    salvando item no banco na collection de de controle de chat de forma temporal
+                    quando o pedido for finalizado, a ordem será salva na collection order
+                    os dados da collection de controle serão apagados para o início de uma nova ordem  */
+                chatControll.updateDoc(message.chatId, Field.tempOrderList, fieldValue.arrayUnion(order), false)
+                // enviar mensagem para o cliente preencher a quantidade
+                client.sendButtons(
+                    message.from,
+                    `Digite agora a quantidade para o produto *${order.title}*\n
                 ⚠ ATENÇÃO ⚠
                 ❱❱❱ DIGITE UM VALOR NUMÉRICO INTEIRO
                 ➥ Ex: 2\n
                 Ou clique no botão e cancele o pedido.`.replace(/^ +/gm, ''),
-                createButtons(buttons.buttonCancell),
-                botConfig.botName
-            )
-                .then(result => {
-                    client.stopTyping(message.from)
-                    /* setando um substágio para o cliente
-                       isso significa que enquanto a ordem estiver aberta {checkState: 'openOrder'}
-                       iremos gerenciar o pedido do cliete com subestágios
-                       o subestágio a seguir é 'quantity' => quantidade
-                       portanto iremos validar a quantidade informada pelo cliente  */
-                    chatControll.updateDoc(message.chatId, Field.subState, 'validateQuantity', false)
-                })
-                .catch(err => console.log('Erro ao enviar mensagend de solicitação de quantidade\n--f openOrder: ', err))
-        }
+                    createButtons(buttons.buttonCancell),
+                    botConfig.botName
+                )
+                    .then(result => {
+                        client.stopTyping(message.from)
+                        /* setando um substágio para o cliente
+                           isso significa que enquanto a ordem estiver aberta {checkState: 'openOrder'}
+                           iremos gerenciar o pedido do cliete com subestágios
+                           o subestágio a seguir é 'quantity' => quantidade
+                           portanto iremos validar a quantidade informada pelo cliente  */
+                        chatControll.updateDoc(message.chatId, Field.subState, 'validateQuantity', false)
+                    })
+                    .catch(err => console.log('Erro ao enviar mensagend de solicitação de quantidade\n--f openOrder: ', err))
+            }
         }
         // referenciando documeto
         const documentReferemces = await chatControll.getDocumetId(message.chatId)
