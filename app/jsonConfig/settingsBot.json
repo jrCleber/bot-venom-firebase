@@ -1,0 +1,10 @@
+{
+    "botName": "BurgerBot 🍔",
+    "baseName": "burgerbot",
+    "companyName": "Rei do Lanche",
+    "shortName": "burgão",
+    "gender": "m",
+    "isBusiness": false,
+    "open": 8,
+    "closed": 20
+}

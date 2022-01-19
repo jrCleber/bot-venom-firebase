@@ -1,0 +1,13 @@
+{
+    "return": ["para","sair","voltar","retornar","abandonar"],
+    "cancel": ["cancelar","cancelar pedido","cancelar o pedido","deletar"],
+    "seeMenu": ["ver o cardápio", "cardápio","visualizar o cardápio","cardapio","ver o cardapio","visualizar o cardapio","menu","lista de produtos","ver os produtos"],
+    "order": {
+        "openOrder": ["fazer um pedido","iniciar o pedido","começar o pedido","abrir o pedido","inicializar o pedido","fazer pedido"],
+        "addOrder": ["adicionar ao pedido","adicionar item","acrescentar ao pedido","add item"],
+        "okOrder": ["pedido ok","tudo certo","pedido certo","tudo ok","ok","certinho","proceguir"]
+    },
+    "notAdd": ["não adicionar", "nao adicionar", "n adicionar"],
+    "otherOptions": ["outras opções","outras opcoes","mais opções","mais opcoes"],
+    "callBot": ["bot","burgão","burgao"]
+}
