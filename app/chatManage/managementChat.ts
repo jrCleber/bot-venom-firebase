@@ -508,10 +508,10 @@ const manageChat = {
                 client.sendButtons(
                     message.from,
                     `Digite agora a quantidade para o produto *${order.title}*\n
-                ⚠ ATENÇÃO ⚠
-                ❱❱❱ DIGITE UM VALOR NUMÉRICO INTEIRO
-                ➥ Ex: 2\n
-                Ou clique no botão e cancele o pedido.`.replace(/^ +/gm, ''),
+                    ⚠ ATENÇÃO ⚠
+                    ❱❱❱ DIGITE UM VALOR NUMÉRICO INTEIRO
+                    ➥ Ex: 2\n
+                    Ou clique no botão e cancele o pedido.`.replace(/^ +/gm, ''),
                     createButtons(buttons.buttonCancell),
                     botConfig.botName
                 )
