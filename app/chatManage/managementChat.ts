@@ -27,7 +27,11 @@ import { orderCommands } from "./commands"
 // farei a busca de CEP com protocolo https
 import { get } from 'https'
 
-// formatando botão
+/**
+ * formatando botão
+ * @param array 
+ * @returns 
+ */
 function createButtons(array: string[]) {
     const listButton: TButtons = []
     array.forEach(b => {
@@ -40,7 +44,10 @@ function createButtons(array: string[]) {
     return listButton
 }
 
-// formatando menuList
+/**
+ * formatando menuList
+ * @returns 
+ */
 function createListMenu() {
     // criando uma lista única de categorias
     const category = [...new Set(menuList.map(m => m.category))]
@@ -61,7 +68,11 @@ function createListMenu() {
     })
 }
 
-// função que exibe para o cliente a evolução e finalização do pedido
+/**
+ * função que exibe para o cliente a evolução e finalização do pedido
+ * @param id 
+ * @returns 
+ */
 async function displayOrder(id: string) {
     let totalOrder = 0.0
     let textOrder = ''
@@ -107,13 +118,19 @@ const log = (value: any) => console.log(value)
 // tipando variável de comandos
 let command: keyof typeof manageOrder | keyof typeof manageAddress
 
-// setando função fieldValue
-// esta função nos dá mais controle sobre os campos da collection
+/**
+ * setando função fieldValue
+ * esta função nos dá mais controle sobre os campos da collection
+ */
 const fieldValue = firestore.FieldValue
 
 // gerenciamento de ordem
 const manageOrder = {
-    // validando a quantidade
+    /**
+     * validando a quantidade
+     * @param message 
+     * @param client 
+     */
     async validateQuantity(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         /* no message.body recebemos aquantidade
@@ -169,10 +186,14 @@ const manageOrder = {
         }
 
     },
-    // adicionando item ao pedido
+    /**
+     * adicionando item ao pedido
+     * @param message 
+     * @param client 
+     */
     async addOrder(message: Message, client: Whatsapp) {
-        // chamando a função initOrder para apresentar novamente o cardápio para o cliente para o cliente
         /**
+         * chamando a função initOrder para apresentar novamente o cardápio para o cliente para o cliente
          * nesse estágio do atendimento, o subestágio do cliente ainda estará como 'addOrder'.
          * Por isso, quando o cliente escolher um novo item para adicionar ao pedido, esta função será executada novamente.
          * Precisamos, neste ponto alterar o subestágio do cliente para nulo ou vazio
@@ -181,11 +202,17 @@ const manageOrder = {
         // atualizando subestágio do cliente
         chatControll.updateDoc(message.from, Field.subState, null, false)
     },
-    // o cliente decidiu não adicionar mais algum item ao pedido
-    // exibir resumo do pedido
+    /**
+     * o cliente decidiu não adicionar mais algum item ao pedido
+     * exibir resumo do pedido
+     * @param message 
+     * @param client 
+     */
     async notAdd(message: Message, client: Whatsapp) {
-        // o cliente não deseja mais adicionar itens
-        // apresentar a evolução do pedido até o momento
+        /**
+         * o cliente não deseja mais adicionar itens
+         * apresentar a evolução do pedido até o momento
+         */
         const textOrder = `*produtos*\n\n${await displayOrder(message.chatId)}`.toUpperCase().replace(/^ +/gm, '')
         client.sendButtons(
             message.from,
@@ -200,9 +227,12 @@ const manageOrder = {
 
 // gerenciamento de endereço
 const manageAddress = {
-    // checando o cep e salvando
+    /**
+     * checando o cep e salvando
+     * @param message 
+     * @param client 
+     */
     checkZipCode(message: Message, client: Whatsapp) {
-
         // respondendo caso a solicitação retorne inválida
         const responseError = () => client.reply(
             message.from,
@@ -292,7 +322,11 @@ const manageAddress = {
             } 
         */
     },
-    // checando bairro e salvando
+    /**
+     * checando bairro e salvando
+     * @param message 
+     * @param client 
+     */
     async checkDistrict(message: Message, client: Whatsapp) {
         const district = message.body
         // referenciando documento
@@ -315,7 +349,11 @@ const manageAddress = {
             .then(result => client.stopTyping(message.from))
             .catch(err => console.log('Erro ao enviar - f checkDistrict: ', err))
     },
-    // checando logradouro
+    /**
+     * checando logradouro
+     * @param message 
+     * @param client 
+     */
     async checkPublicPlace(message: Message, client: Whatsapp) {
         const publicPlace = message.body
         // referenciando documento
@@ -338,7 +376,11 @@ const manageAddress = {
             .then(result => client.stopTyping(message.from))
             .catch(err => console.log('Erro ao enviar - f checkPublicPlace: ', err))
     },
-    // checando número
+    /**
+     * checando número
+     * @param message 
+     * @param client 
+     */
     async checkNumber(message: Message, client: Whatsapp) {
         const number = message.body
         // referenciando documento
@@ -375,7 +417,11 @@ const manageAddress = {
 
 // gerenciamento de chat
 const manageChat = {
-    // iniciando o atendimento a partir de qualquer mensagem recebida
+    /**
+     * iniciando o atendimento a partir de qualquer mensagem recebida
+     * @param message 
+     * @param client 
+     */
     async initChat(message: Message, client: Whatsapp) {
         seeTyping(client, message.chatId)
         // capturando informações de contato
@@ -416,7 +462,11 @@ const manageChat = {
             })
             .catch(err => console.error('Erro - f initChat: ', err))
     },
-    // enviando o cardápio em imagem
+    /**
+     * enviando o cardápio em imagem
+     * @param message 
+     * @param client 
+     */
     async sendMenuImage(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         const path = './app/assets'
@@ -436,7 +486,11 @@ const manageChat = {
             .then(result => client.stopTyping(message.from))
             .catch(err => console.error('Error - f sendMenu buttons: ', err))
     },
-    // outras opções de chat - não serão implementadas
+    /**
+     * outras opções de chat - não serão implementadas
+     * @param message 
+     * @param client 
+     */
     otherOptions(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         client.sendButtons(
@@ -448,7 +502,11 @@ const manageChat = {
             .then(result => client.stopTyping(message.from))
             .catch(err => console.log('Erro - f otherOptions: ', err))
     },
-    // chamando o bot
+    /**
+     * chamando o bot
+     * @param message 
+     * @param client 
+     */
     callBot(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         client.sendButtons(
@@ -461,7 +519,12 @@ const manageChat = {
             .then(result => client.stopTyping(message.from))
             .catch(err => console.error('Erro - f callBot: ', err))
     },
-    // abrindo ordem
+    /**
+     * iniciando ordem e enviando o cardápio como lista
+     * @param message 
+     * @param client 
+     * @param addOrder 
+     */
     initOrder(message: Message, client: Whatsapp, addOrder = false) {
         seeTyping(client, message.from)
         // atualizando o estágio onde o cliente se encontra no gerenciamento do atendimento
@@ -481,6 +544,11 @@ const manageChat = {
             })
             .catch(err => console.error('Erro - f initOrder', err))
     },
+    /**
+     * abrindo ordem
+     * @param message 
+     * @param client 
+     */
     async openOrder(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // declarando variável que receberá o item clicado pelo cliente
@@ -586,7 +654,11 @@ const manageChat = {
             }
         }
     },
-    // o cliente informou que a ordem está ok até o momento
+    /**
+     * o cliente informou que a ordem está ok até o momento
+     * @param message 
+     * @param client 
+     */
     okOrder(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // iniciando cadastro de endereço
@@ -602,6 +674,11 @@ const manageChat = {
         // atualizando subestágio para validar a checar o CEP
         chatControll.updateDoc(message.from, Field.subState, 'checkZipCode', false)
     },
+    /**
+     * registando o endereço do cliente
+     * @param message 
+     * @param client 
+     */
     async registerAddress(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // referenciando documeto
@@ -617,6 +694,11 @@ const manageChat = {
             addressManagement(message, client)
         }
     },
+    /**
+     * finalizando a ordem
+     * @param message 
+     * @param client 
+     */
     async orderEnd(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // recuperando os dados tempotais de chatControll
@@ -649,6 +731,11 @@ const manageChat = {
         }
         chatControll.updateManyFields(message.chatId, resettingFields)
     },
+    /**
+     * cancelando a ordem
+     * @param message 
+     * @param client 
+     */
     cancelOrder(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         const resettingFields: TDataTemp = {
