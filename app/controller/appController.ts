@@ -2,7 +2,7 @@ import { DbConn } from '../../connections/dbConnection'
 import { firestore } from 'firebase-admin'
 
 /**
- * criando o controller que fará o CRUD * 
+ * criando o controller que fará o CRUD
  * @AddData https://firebase.google.com/docs/firestore/manage-data/add-data#set_a_document
  * @UpdateData https://firebase.google.com/docs/firestore/manage-data/add-data#update-data
  * @GetData https://firebase.google.com/docs/firestore/query-data/get-data#get_a_document
