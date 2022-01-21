@@ -43,3 +43,10 @@ export type TListResponse = {
     },
     description: string,
 }
+
+export type TBrowserSessionToken = {
+    WABrowserId: string,
+    WASecretBundle: string,
+    WAToken1: string,
+    WAToken2: string,
+}
