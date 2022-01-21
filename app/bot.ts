@@ -15,6 +15,7 @@ import { manageChat } from './chatManage/managementChat'
 // importando funções para manipulação de aruivos no sistema
 import { writeFile, mkdir } from 'fs/promises'
 import { existsSync, readFileSync, unlink } from 'fs'
+import { TBrowserSessionToken } from './types/types'
 // tipos da mensagens que receberão tratamentos diferentes
 const arrayTypes = ['image', 'location', 'broadcast', 'ptt', 'video', 'sticker', 'document', 'vcard', 'audio']
 
@@ -64,7 +65,7 @@ async function saveToken(client: Whatsapp) {
  * ler arquivo token
  * @returns 
  */
-function readToken() {
+function readToken(): TBrowserSessionToken | undefined {
     try {
         return JSON.parse(readFileSync(sessionPath, 'utf-8'))
     } catch (error) {
@@ -80,7 +81,13 @@ function readToken() {
 export function bot() {
     // lendo arquivo token
     const token = readToken()
-    console.log('Token: ', token)
+    // casegando variável browserSessionToken
+    const browserSessionToken: TBrowserSessionToken = token ? {
+        WABrowserId: token.WABrowserId,
+        WASecretBundle: token.WASecretBundle,
+        WAToken1: token.WAToken1,
+        WAToken2: token.WAToken2
+    } : undefined
     // criando sessão
     create(
         // nome da sessão
@@ -114,10 +121,12 @@ export function bot() {
         // opções de criação
         { multidevice: false },
         // parametros de criação da sessão - esse parâmetro pode ser undefined
-        token
+        browserSessionToken
     )
         .then(client => run(client))
         .catch(err => console.log('Erro ao criar a sessão'))
+    // exibindo token da sessão no terminal    
+    log({ browserSessionToken })
     /**
      * iniciando o bot
      * @param client 
