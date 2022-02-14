@@ -17,7 +17,7 @@ import menuList from '../data/menuList.json'
 //importando nome das collections
 import collection from '../data/collectionsNames.json'
 // importando interfaces
-import { TRowsMenu, TButtons, TOrder, TAddress, TDataTemp, TListResponse } from '../types/types'
+import { TRowsMenu, TButtons, TOrder, TAddress, TDataTemp, TListResponse, TSections } from '../types/types'
 // importandp firestore para tipagem
 import { firestore } from 'firebase-admin'
 // importando opções de respostas/comando
@@ -29,11 +29,11 @@ import { get } from 'https'
 
 /**
  * formatando botão
- * @param array 
- * @returns 
+ * @param {string} array 
+ * @returns {TButtons}
  */
-function createButtons(array: string[]) {
-    const listButton: TButtons = []
+function createButtons(array: string[]): TButtons[] {
+    const listButton: TButtons[] = []
     array.forEach(b => {
         listButton.push({
             buttonText: {
@@ -46,14 +46,14 @@ function createButtons(array: string[]) {
 
 /**
  * formatando menuList
- * @returns 
+ * @returns {TSections}
  */
-function createListMenu() {
+function createListMenu(): TSections[] {
     // criando uma lista única de categorias
     const category = [...new Set(menuList.map(m => m.category))]
     // formatando
     return Array.from(category, c => {
-        const rows: TRowsMenu = []
+        const rows: TRowsMenu[] = []
         const title = c.toUpperCase()
         menuList.forEach(m => {
             if (m.category === c) {
@@ -71,9 +71,9 @@ function createListMenu() {
 /**
  * função que exibe para o cliente a evolução e finalização do pedido
  * @param id 
- * @returns 
+ * @returns {Promise<string>}
  */
-async function displayOrder(id: string) {
+async function displayOrder(id: string): Promise<string> {
     let totalOrder = 0.0
     let textOrder = ''
     /* RECUPERANDO DADOS TEMPORAIS DO CLIENTE */
