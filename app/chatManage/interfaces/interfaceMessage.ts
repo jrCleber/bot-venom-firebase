@@ -22,6 +22,7 @@ export interface Message {
    mimetype: string;
    directPath: string;
    filehash: string;
+   selectedButtonId: string;
    uploadhash: string;
    size: number;
    mediaKey: string;
@@ -58,25 +59,10 @@ export interface Message {
       contact: Sender;
       groupMetadata: null;
       presence: Presence;
-      /**
-       * @deprecated This is unreliable. Use the method {@link Whatsapp.getChatIsOnline} instead.
-       */
-      isOnline: null | boolean;
-      /**
-       * @deprecated This is unreliable. Use the method {@link Whatsapp.getLastSeen} instead.
-       */
-      lastSeen: null | number | boolean;
    };
-   /**
-    * @deprecated This is unreliable. Use the method {@link Whatsapp.getChatIsOnline} instead.
-    */
-   isOnline: null | boolean;
-   /**
-    * @deprecated This is unreliable. Use the method {@link Whatsapp.getLastSeen} instead.
-    */
    lastSeen: null | number | boolean;
    chatId: string;
-   quotedMsgObj: QuotedMsg;
+   quotedMsgObj: QuotedMsgList;
    mediaData: MediaData;
    listResponse: ListResponse
 }
@@ -100,9 +86,23 @@ export interface List {
    buttonText: string;
    listType: number;
 }
-export interface QuotedMsg {
+export interface QuotedMsgList {
    type: string;
    list: List;
+}
+export interface QuotedMsgButtonsResponse {
+   type: string;
+   beaderType: number;
+   body: string;
+   isDynamicReplyButtonsMsg: true;
+   caption: string,
+   footer: string;
+   dynamicReplyButtons: ReplyButtons[]
+}
+export interface ReplyButtons {
+   buttonId: string;
+   buttonText: { displayText: string };
+   type: number;
 }
 export interface Sender {
    id: string;
