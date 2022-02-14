@@ -29,7 +29,7 @@ import { get } from 'https'
 
 /**
  * formatando botão
- * @param {string} array 
+ * @param {string[]} array 
  * @returns {TButtons}
  */
 function createButtons(array: string[]): TButtons[] {
