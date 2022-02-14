@@ -78,57 +78,54 @@ function readToken(): TBrowserSessionToken | undefined {
 /**
  * CRIANDO O BOT COM O MULTDEVICE FALSE
  */
-export function bot() {
+export async function bot() {
+    // criando variável cliente
+    let client: Whatsapp
     // lendo arquivo token
-    const token = readToken()
-    // casegando variável browserSessionToken
-    const browserSessionToken: TBrowserSessionToken = token ? {
-        WABrowserId: token.WABrowserId,
-        WASecretBundle: token.WASecretBundle,
-        WAToken1: token.WAToken1,
-        WAToken2: token.WAToken2
-    } : undefined
+    const browserSessionToken: TBrowserSessionToken = readToken()
     // criando sessão
-    create(
-        // nome da sessão
-        botConfig.baseName,
-        // recuperando dados do qr code, se existir.
-        (base64Qr, asciiQR, attempts, urlCode) => {
-            /**
-             * se o valor da variável base64Qr for verdadeiro, significa que o usuário se
-             * desconectou no smartphone, nesse caso podemos excluir a pasta token, se ela existrir,
-             * e salvar as novas configurações de browsertoken
-             */
-            /* GANBIARRA FUNCIONAL */
-            if (base64Qr) {
-                log('Aparelho desconectado')
-                // checando se a pasta tokens existe
-                if (check(path)) {
-                    log('Removendo arquivo da sessão na pasta tokens')
-                    unlink(sessionPath, (err) => {
-                        // esse erro nunca será mostrado, pois a função de remoção só será executada se o arquivo existir
-                        if (err) console.log('A pasta não existe: ', err)
-                        else log('Arquivo de sessão removido da pasta token.\n')
-                    })
+    try {
+        client = await create(
+            // nome da sessão
+            botConfig.baseName,
+            // recuperando dados do qr code, se existir.
+            (base64Qr, asciiQR, attempts, urlCode) => {
+                /**
+                 * se o valor da variável base64Qr for verdadeiro, significa que o usuário se
+                 * desconectou no smartphone, nesse caso podemos excluir a pasta token, se ela existrir,
+                 * e salvar as novas configurações de browsertoken
+                 */
+                /* GANBIARRA FUNCIONAL */
+                if (base64Qr) {
+                    log('Aparelho desconectado')
+                    // checando se a pasta tokens existe
+                    if (check(path)) {
+                        log('Removendo arquivo da sessão na pasta tokens')
+                        unlink(sessionPath, (err) => {
+                            if (err) console.log('Arquivo inexistente: ', err)
+                            else log('Arquivo de sessão removido da pasta token.\n')
+                        })
+                    }
                 }
-            }
-        },
-        // status da sessão
-        (statusSession, sessionName) => {
-            console.log('STATUS SESSION: ', statusSession)
-            console.log('SESSION NAME: ', sessionName)
-        },
-        // opções de criação
-        { multidevice: false },
-        // parametros de criação da sessão - esse parâmetro pode ser undefined
-        browserSessionToken
-    )
-        .then(client => run(client))
-        .catch(err => console.log('Erro ao criar a sessão'))
-    // exibindo token da sessão no terminal    
+            },
+            // status da sessão
+            (statusSession, sessionName) => {
+                console.log('STATUS SESSION: ', statusSession)
+                console.log('SESSION NAME: ', sessionName)
+            },
+            // opções de criação
+            { multidevice: false },
+            // parametros de criação da sessão - esse parâmetro pode ser undefined
+            browserSessionToken
+        )
+        // inicializando o bot
+        run(client)
+    } catch (error) {
+        console.log('\x1b[31m', 'Erro ao criar a sessão')
+    }
     log({ browserSessionToken })
     /**
-     * iniciando o bot
+     * função que faz o gerenciamento do bot
      * @param client 
      */
     async function run(client: Whatsapp) {
