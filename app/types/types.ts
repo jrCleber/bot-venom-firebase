@@ -4,13 +4,18 @@ export type TRowsMenu = {
     title: string,
     description: string,
     rowId: string
-}[]
+}
+
+export type TSections = {
+    title: string,
+    rows: TRowsMenu[]
+}
 
 export type TButtons = {
     buttonText: {
         displayText: string
     }
-}[]
+}
 
 export type TOrder = {
     title: string,
