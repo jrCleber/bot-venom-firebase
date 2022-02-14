@@ -183,6 +183,6 @@ export async function bot() {
 
 /**
  * OBS
- * Para capturar o is do botão na mensagem de resposta,
+ * Para capturar o id do botão na mensagem de resposta,
  * utilize a propriedade selectedButtonId em message.selectedButtonId
  */
