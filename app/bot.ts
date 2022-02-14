@@ -180,3 +180,9 @@ export async function bot() {
     }
     log({ browserSessionToken })
 }
+
+/**
+ * OBS
+ * Para capturar o is do botão na mensagem de resposta,
+ * utilize a propriedade selectedButtonId em message.selectedButtonId
+ */
