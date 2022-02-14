@@ -114,7 +114,10 @@ export async function bot() {
                 console.log('SESSION NAME: ', sessionName)
             },
             // opções de criação
-            { multidevice: false },
+            { 
+                multidevice: false,
+                disableWelcome: true
+             },
             // parametros de criação da sessão - esse parâmetro pode ser undefined
             browserSessionToken
         )
