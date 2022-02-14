@@ -2,6 +2,8 @@
 import { EnumField as Field } from './utils/enum'
 // importando arquivo de criação do bot
 import { create, Whatsapp } from 'venom-bot'
+// importando tipagem da variável mensagem
+import { Message } from './chatManage/interfaces/interfaceMessage'
 // importando o controller da aplicação
 import { AppController } from "./controller/appController"
 // importando as configurações do bot
@@ -84,8 +86,8 @@ async function run(client: Whatsapp) {
     // realizandp a configuração da pasta tokens, caso ela não exista
     if (!check(sessionPath)) saveToken(client)
     // ouvindo todas as mensagens que são recebidas
-    client.onMessage(async message => {
-        log(message)
+    client.onMessage(async (message) => {
+        log(message.quotedMsgObj)
         // verificando se o tipo da mensagem não está incluso nop arraytypes
         if (arrayTypes.includes(message.type) === false && message.isGroupMsg === false && message.hasOwnProperty('body')) {
             // referenciando o documento de estágios do cliente
