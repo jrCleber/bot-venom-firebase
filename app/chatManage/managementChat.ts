@@ -134,7 +134,7 @@ const manageOrder = {
     async validateQuantity(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         /* no message.body recebemos aquantidade
-           agora checaresmos se a quantidade recebidade é realmente um número inteiro, onforme definido na regra de negócio
+           agora checaresmos se a quantidade recebidade é realmente um número inteiro, conforme definido na regra de negócio
            e se esse número é maior que zero */
         if (Number.isInteger(parseInt(message.body)) && parseInt(message.body) > 0) {
             // referenciando documento
