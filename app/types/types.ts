@@ -14,7 +14,9 @@ export type TSections = {
 export type TButtons = {
     buttonText: {
         displayText: string
-    }
+    },
+    type: 1,
+    buttonId: string
 }
 
 export type TOrder = {
@@ -54,4 +56,9 @@ export type TBrowserSessionToken = {
     WASecretBundle: string,
     WAToken1: string,
     WAToken2: string,
+}
+
+export type TActionBot = {
+    text: string,
+    id: string,
 }
