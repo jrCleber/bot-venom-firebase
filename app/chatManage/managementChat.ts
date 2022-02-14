@@ -17,7 +17,7 @@ import menuList from '../data/menuList.json'
 //importando nome das collections
 import collection from '../data/collectionsNames.json'
 // importando interfaces
-import { TRowsMenu, TButtons, TOrder, TAddress, TDataTemp, TListResponse, TSections } from '../types/types'
+import { TRowsMenu, TButtons, TOrder, TAddress, TDataTemp, TListResponse, TSections, TActionBot } from '../types/types'
 // importandp firestore para tipagem
 import { firestore } from 'firebase-admin'
 // importando opções de respostas/comando
@@ -32,13 +32,15 @@ import { get } from 'https'
  * @param {string[]} array 
  * @returns {TButtons}
  */
-function createButtons(array: string[]): TButtons[] {
+function createButtons(array: TActionBot[]): TButtons[] {
     const listButton: TButtons[] = []
     array.forEach(b => {
         listButton.push({
             buttonText: {
-                displayText: b
-            }
+                displayText: b.text
+            },
+            type: 1,
+            buttonId: b.id
         })
     })
     return listButton
