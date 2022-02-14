@@ -75,6 +75,56 @@ function readToken(): TBrowserSessionToken | undefined {
         })
     }
 }
+
+/**
+ * função que faz o gerenciamento do bot
+ * @param client 
+ */
+async function run(client: Whatsapp) {
+    // realizandp a configuração da pasta tokens, caso ela não exista
+    if (!check(sessionPath)) saveToken(client)
+    // ouvindo todas as mensagens que são recebidas
+    client.onMessage(async message => {
+        log(message)
+        // verificando se o tipo da mensagem não está incluso nop arraytypes
+        if (arrayTypes.includes(message.type) === false && message.isGroupMsg === false && message.hasOwnProperty('body')) {
+            // referenciando o documento de estágios do cliente
+            const documentReference = await chatControll.getDocumetId(message.chatId)
+            // alocando dados do documento
+            const documentData = documentReference?.data()
+            // verificando se o documento está vazio
+            if (documentReference?.exists) {
+                // se sim: passar as configurações de estágio do checkState
+                command = documentData[Field.codeState]
+            } else {
+                // se não: passar o comando de início de chat
+                command = 'initChat'
+            }
+            /**
+             * fazendo a varredura para verificar se o comando existe na lista de comandos
+             * caso os estágios do cliente estejam zerados no banco.
+             * isso acontece, pois no final do atendimento, os estágios do cliente serão reiniciados no banco,
+             * ou quando o cliente estiver em algum subestágio do atendimento
+             */
+            for (const [key, func] of Object.entries(initCommands)) {
+                /**
+                 * verificando se o cliente enviou algum comando válido e atribuindo o comando na variável command
+                 * se não, mantém-se o valor da variável command do bloco if
+                 */
+                if (func(message) === true) {
+                    command = key as keyof typeof manageChat
+                    break
+                }
+            }
+            // instanciando a função
+            const chatManagement = manageChat[command]
+            // verificando se a referência da função é verdadeira
+            if (chatManagement) {
+                chatManagement(message, client)
+            }
+        }
+    })
+}
 /**
  * CRIANDO O BOT COM O MULTDEVICE FALSE
  */
@@ -114,10 +164,10 @@ export async function bot() {
                 console.log('SESSION NAME: ', sessionName)
             },
             // opções de criação
-            { 
+            {
                 multidevice: false,
                 disableWelcome: true
-             },
+            },
             // parametros de criação da sessão - esse parâmetro pode ser undefined
             browserSessionToken
         )
@@ -127,53 +177,4 @@ export async function bot() {
         console.log('\x1b[31m', 'Erro ao criar a sessão')
     }
     log({ browserSessionToken })
-    /**
-     * função que faz o gerenciamento do bot
-     * @param client 
-     */
-    async function run(client: Whatsapp) {
-        // realizandp a configuração da pasta tokens, caso ela não exista
-        if (!check(sessionPath)) saveToken(client)
-        // ouvindo todas as mensagens que são recebidas
-        client.onMessage(async message => {
-            log(message)
-            // verificando se o tipo da mensagem não está incluso nop arraytypes
-            if (arrayTypes.includes(message.type) === false && message.isGroupMsg === false && message.hasOwnProperty('body')) {
-                // referenciando o documento de estágios do cliente
-                const documentReference = await chatControll.getDocumetId(message.chatId)
-                // alocando dados do documento
-                const documentData = documentReference?.data()
-                // verificando se o documento está vazio
-                if (documentReference?.exists) {
-                    // se sim: passar as configurações de estágio do checkState
-                    command = documentData[Field.codeState]
-                } else {
-                    // se não: passar o comando de início de chat
-                    command = 'initChat'
-                }
-                /**
-                 * fazendo a varredura para verificar se o comando existe na lista de comandos
-                 * caso os estágios do cliente estejam zerados no banco.
-                 * isso acontece, pois no final do atendimento, os estágios do cliente serão reiniciados no banco,
-                 * ou quando o cliente estiver em algum subestágio do atendimento
-                 */
-                for (const [key, func] of Object.entries(initCommands)) {
-                    /**
-                     * verificando se o cliente enviou algum comando válido e atribuindo o comando na variável command
-                     * se não, mantém-se o valor da variável command do bloco if
-                     */
-                    if (func(message) === true) {
-                        command = key as keyof typeof manageChat
-                        break
-                    }
-                }
-                // instanciando a função
-                const chatManagement = manageChat[command]
-                // verificando se a referência da função é verdadeira
-                if (chatManagement) {
-                    chatManagement(message, client)
-                }
-            }
-        })
-    }
 }
