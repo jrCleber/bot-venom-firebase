@@ -1,9 +1,33 @@
 {
-    "buttonsListInit": ["Fazer um pedido","Ver o cardápio","Outras opções"],
-    "buttonsViewMenu": ["Fazer um pedido", "Voltar"],
-    "buttonsOtherOptions": ["Fazer uma recalmação","Falar com um atendente","Alterar cadastro"],
-    "buttonCancell": ["Cancelar o pedido"],
-    "buttonsAddItemOrder": ["Adicionar item", "Não adicionar"],
-    "buttonsOrder": ["Pedido ok","Editar o pedido", "Cancelar o pedido"],
-    "buttosnOrderEnd": ["Enviar o pedido","Editar o pedico","Concelar"]
+    "buttonsListInit": [
+        {"text": "Fazer um pedido", "id": "id1"},
+        {"text": "Ver o cardápio", "id": "id2"},
+        {"text": "Outras opções", "id": "id3"}
+    ],
+    "buttonsViewMenu": [
+        {"text": "Fazer um pedido", "id": "id4"},
+        {"text": "Voltar", "id": "id5"}
+    ],
+    "buttonsOtherOptions": [
+        {"text": "Fazer uma recalmação", "id": "id6"},
+        {"text": "Falar com um atendente", "id": "id7"},
+        {"text": "Alterar cadastro", "id": "id8"}
+    ],
+    "buttonCancell": [
+        {"text": "Cancelar o pedido", "id": "id9"}
+    ],
+    "buttonsAddItemOrder": [
+        {"text": "Adicionar item", "id": "id10"},
+        {"text": "Não adicionar", "id": "id11"}
+    ],
+    "buttonsOrder": [
+        {"text": "Pedido ok", "id": "id12"},
+        {"text": "Editar o pedido", "id": "id13"},
+        {"text": "Cancelar", "id": "id14"}
+    ],
+    "buttosnOrderEnd": [
+        {"text": "Enviar o pedido", "id": "id15"},
+        {"text": "Editar o pedido", "id": "id16"},
+        {"text": "Cancelar", "id": "id17"}
+    ]
 }
