@@ -1,4 +1,4 @@
-import { Message } from 'venom-bot'
+import { Message } from './interfaces/interfaceMessage'
 import options from '../jsonConfig/optionsBot.json'
 // relação de comandos para gerenciamento do chat
 const initCommands = {
