@@ -36,4 +36,4 @@ Esta aplicação tem como objetivo o atendimento automatizado e o gerenciamento 
 Essa aplicação não realiza o gerenciamento de pagamentos, roteamentos para atendentes e edições em gerais.
 <br/>
 
-**ApiWhatsAppSender:** https://api.whatsapp.com/send?phone=55...
+**Contact:** https://api.whatsapp.com/send?phone=5531995918699
