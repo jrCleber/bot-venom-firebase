@@ -82,7 +82,7 @@ function readToken(): TBrowserSessionToken | undefined {
  * função que faz o gerenciamento do bot
  * @param client 
  */
-async function run(client: Whatsapp) {
+function runBot(client: Whatsapp) {
     // realizandp a configuração da pasta tokens, caso ela não exista
     if (!check(sessionPath)) saveToken(client)
     // ouvindo todas as mensagens que são recebidas
@@ -128,9 +128,9 @@ async function run(client: Whatsapp) {
     })
 }
 /**
- * CRIANDO O BOT COM O MULTDEVICE FALSE
+ * CONECTANDO AO WHATSAPP COM O MULTDEVICE FALSE
  */
-export async function bot() {
+export async function connectWhatsapp() {
     // criando variável cliente
     let client: Whatsapp
     // lendo arquivo token
@@ -174,7 +174,7 @@ export async function bot() {
             browserSessionToken
         )
         // inicializando o bot
-        run(client)
+        runBot(client)
     } catch (error) {
         console.log('\x1b[31m', 'Erro ao criar a sessão')
     }
