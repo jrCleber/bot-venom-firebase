@@ -168,7 +168,7 @@ const manageOrder = {
                 .then(result => {
                     client.stopTyping(message.from)
                     // alterando subestágio para addOrder
-                    chatControll.updateDoc(message.chatId, Field.subState, 'addOrder', false)
+                    chatControll.updateDoc(message.chatId, Field.subStage, 'addOrder', false)
                 })
                 .catch(err => console.log('Erro ao enviar - f validateQuantity - true: ', err))
         } else {
@@ -202,7 +202,7 @@ const manageOrder = {
          */
         manageChat.initOrder(message, client, true)
         // atualizando subestágio do cliente
-        chatControll.updateDoc(message.from, Field.subState, null, false)
+        chatControll.updateDoc(message.from, Field.subStage, null, false)
     },
     /**
      * o cliente decidiu não adicionar mais algum item ao pedido
@@ -282,7 +282,7 @@ const manageAddress = {
                                     Digite agora o seu bairro:`.replace(/^ +/gm, '')
                                 responseSuccess(sendMessage)
                                 // setando subestágio como aguardado o bairro
-                                chatControll.updateDoc(message.chatId, Field.subState, 'checkDistrict', false)
+                                chatControll.updateDoc(message.chatId, Field.subStage, 'checkDistrict', false)
                             } else if (cep.logradouro === '') {
                                 address.distryct = cep.bairro
                                 sendMessage = `➠ *Cidade:* ${address.city}
@@ -290,7 +290,7 @@ const manageAddress = {
                                     Digite agora o seu logradouro: (rua, ou avenida, ou rodovia, etc)`.replace(/^ +/gm, '')
                                 responseSuccess(sendMessage)
                                 // setando subestágio como aguardado o logradouro
-                                chatControll.updateDoc(message.chatId, Field.subState, 'checkPublicPlace', false)
+                                chatControll.updateDoc(message.chatId, Field.subStage, 'checkPublicPlace', false)
                             } else {
                                 address.distryct = cep.bairro
                                 address.publicPlace = cep.logradouro
@@ -300,7 +300,7 @@ const manageAddress = {
                                     Digite agora o numero da residência para a entrega:`.replace(/^ +/gm, '')
                                 responseSuccess(sendMessage)
                                 // setando subestágio como aguardado número da residência
-                                chatControll.updateDoc(message.chatId, Field.subState, 'checkNumber', false)
+                                chatControll.updateDoc(message.chatId, Field.subStage, 'checkNumber', false)
                             }
                             // inserindo dados da variável address de forma temporal em chatCpntroll
                             chatControll.updateDoc(message.chatId, Field.tempAddress, address, false)
@@ -342,7 +342,7 @@ const manageAddress = {
         // atualizando endereço
         chatControll.updateDoc(message.chatId, Field.tempAddress, address)
         // atualizando subestágio
-        chatControll.updateDoc(message.chatId, Field.subState, 'checkPublicPlace', false)
+        chatControll.updateDoc(message.chatId, Field.subStage, 'checkPublicPlace', false)
         // enviando mensagem para o cliente preencher o logradouro(rua, avenida, rodovia, etc)
         client.sendText(
             message.from,
@@ -369,7 +369,7 @@ const manageAddress = {
         // atualizando endereço
         chatControll.updateDoc(message.chatId, Field.tempAddress, address)
         // atualizando subestágio
-        chatControll.updateDoc(message.chatId, Field.subState, 'checkNumber', false)
+        chatControll.updateDoc(message.chatId, Field.subStage, 'checkNumber', false)
         // enviando mensagem para o cliente preencher o logradouro(rua, avenida, rodovia, etc)
         client.sendText(
             message.from,
@@ -396,7 +396,7 @@ const manageAddress = {
         // atualizando endereço
         chatControll.updateDoc(message.chatId, Field.tempAddress, address)
         // atualizando subestágio
-        chatControll.updateDoc(message.chatId, Field.codeState, 'orderEnd', false)
+        chatControll.updateDoc(message.chatId, Field.codeStage, 'orderEnd', false)
         // enviando o resumo final do pedido para o cliente
         client.sendText(
             message.from,
@@ -447,7 +447,7 @@ const manageChat = {
          * setando estágio do cliente
          * collection - chatControll
          */
-        const state = { codeState: 'initChat' }
+        const state = { codeStage: 'initChat' }
         chatControll.insertDocWithId(message.chatId, state, false)
         client.sendButtons(
             message.from,
@@ -530,7 +530,7 @@ const manageChat = {
     initOrder(message: Message, client: Whatsapp, addOrder = false) {
         seeTyping(client, message.from)
         // atualizando o estágio onde o cliente se encontra no gerenciamento do atendimento
-        if (!addOrder) chatControll.updateDoc(message.chatId, Field.codeState, 'openOrder', false)
+        if (!addOrder) chatControll.updateDoc(message.chatId, Field.codeStage, 'openOrder', false)
         client.sendListMenu(
             message.from,
             botConfig.companyName.toUpperCase(),
@@ -610,7 +610,7 @@ const manageChat = {
                          * o subestágio a seguir é 'quantity' => quantidade
                          * portanto iremos validar a quantidade informada pelo cliente
                          */
-                        chatControll.updateDoc(message.chatId, Field.subState, 'validateQuantity', false)
+                        chatControll.updateDoc(message.chatId, Field.subStage, 'validateQuantity', false)
                     })
                     .catch(err => console.log('Erro ao enviar mensagend de solicitação de quantidade\n--f openOrder: ', err))
             }
@@ -620,7 +620,7 @@ const manageChat = {
         // alocando dados
         const documentData: TDataTemp = documentReferemces!.data()
         // setando variável de comandos
-        command = documentData[Field.subState] as keyof typeof manageOrder
+        command = documentData[Field.subStage] as keyof typeof manageOrder
         // fazendo a varredura nos comandos de ordem
         for (const [key, func] of Object.entries(orderCommands)) {
             if (func(message)) {
@@ -672,9 +672,9 @@ const manageChat = {
             })
             .catch(err => console.log('Erro ao enviar - f okOrder: ', err))
         // atualizando estágio do cliente para o cadastro de endereço
-        chatControll.updateDoc(message.from, Field.codeState, 'registerAddress', false)
+        chatControll.updateDoc(message.from, Field.codeStage, 'registerAddress', false)
         // atualizando subestágio para validar a checar o CEP
-        chatControll.updateDoc(message.from, Field.subState, 'checkZipCode', false)
+        chatControll.updateDoc(message.from, Field.subStage, 'checkZipCode', false)
     },
     /**
      * registando o endereço do cliente
@@ -688,7 +688,7 @@ const manageChat = {
         // alocando dados
         const documentData: TDataTemp = documentReferemces!.data()
         // setando variável de comandos
-        command = documentData[Field.subState] as keyof typeof manageAddress
+        command = documentData[Field.subStage] as keyof typeof manageAddress
         // instanciando função
         const addressManagement = manageAddress[command]
         // verificando se a referencia da função é verdadeira
@@ -726,8 +726,8 @@ const manageChat = {
             .catch(err => console.log('Erro ao enviar - orderEnd: ', err))
         // resetando dados temporários e reiniciando estágio e subsetágio do cliente em chat controll
         const resettingFields: TDataTemp = {
-            codeState: '',
-            subState: fieldValue.delete(),
+            codeStage: '',
+            subStage: fieldValue.delete(),
             tempAddress: fieldValue.delete(),
             tempOrderList: fieldValue.delete()
         }
@@ -741,8 +741,8 @@ const manageChat = {
     cancelOrder(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         const resettingFields: TDataTemp = {
-            codeState: '',
-            subState: fieldValue.delete(),
+            codeStage: '',
+            subStage: fieldValue.delete(),
             tempAddress: fieldValue.delete(),
             tempOrderList: fieldValue.delete()
         }

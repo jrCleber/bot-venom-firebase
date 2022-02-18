@@ -97,7 +97,7 @@ function runBot(client: Whatsapp) {
             // verificando se o documento está vazio
             if (documentReference?.exists) {
                 // se sim: passar as configurações de estágio do checkState
-                command = documentData[Field.codeState]
+                command = documentData[Field.codeStage]
             } else {
                 // se não: passar o comando de início de chat
                 command = 'initChat'

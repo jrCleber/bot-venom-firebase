@@ -2,8 +2,8 @@
 export enum EnumField {
     address = 'address',
     orderList = 'orderList',
-    codeState = 'codeState',
-    subState = 'subState',
+    codeStage = 'codeState',
+    subStage = 'subState',
     tempOrderList = 'tempOrderList',
     tempAddress = 'tempAddress'
 }

@@ -36,8 +36,8 @@ export type TAddress = {
 }
 
 export type TDataTemp = {
-    codeState: string,
-    subState: string | firestore.FieldValue,
+    codeStage: string,
+    subStage: string | firestore.FieldValue,
     tempAddress: TAddress | firestore.FieldValue,
     tempOrderList: TOrder[] | firestore.FieldValue
 }
