@@ -87,7 +87,7 @@ function runBot(client: Whatsapp) {
     if (!check(sessionPath)) saveToken(client)
     // ouvindo todas as mensagens que são recebidas
     client.onMessage(async (message) => {
-        log(message.quotedMsgObj)
+        log(message)
         // verificando se o tipo da mensagem não está incluso nop arraytypes
         if (arrayTypes.includes(message.type) === false && message.isGroupMsg === false && message.hasOwnProperty('body')) {
             // referenciando o documento de estágios do cliente
