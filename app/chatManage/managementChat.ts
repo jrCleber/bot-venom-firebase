@@ -148,7 +148,7 @@ const manageOrder = {
             // capturando o index do último pedido configurado pelo cliente
             const index = orderList.length - 1
             // alocando a última orderm configurada pelo cliente
-            let order: TOrder = orderList[index]
+            const order: TOrder = orderList[index]
             /**
              * OBS: no firebase ainda não é possível atualizar um item no array, ou removemos ou adicionamos.
              * por isso vamos remover do banco o objeto order capturado em orderList
@@ -278,7 +278,7 @@ const manageAddress = {
                              */
                             let sendMessage: string
                             if (cep.bairro === '') {
-                                sendMessage = `*Cidade:* ${address.city}\n
+                                sendMessage = `➠ *Cidade:* ${address.city}\n
                                     Digite agora o seu bairro:`.replace(/^ +/gm, '')
                                 responseSuccess(sendMessage)
                                 // setando subestágio como aguardado o bairro
