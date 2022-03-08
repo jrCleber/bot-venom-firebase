@@ -447,8 +447,8 @@ const manageChat = {
          * setando estágio do cliente
          * collection - chatControll
          */
-        const state = { codeStage: 'initChat' }
-        chatControll.insertDocWithId(message.chatId, state, false)
+        const stage = { codeStage: 'initChat' }
+        chatControll.insertDocWithId(message.chatId, stage, false)
         client.sendButtons(
             message.from,
             `Olá! Bem vindo ao *${botConfig.companyName}*😁!
@@ -554,7 +554,7 @@ const manageChat = {
     async openOrder(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // declarando variável que receberá o item clicado pelo cliente
-        let itemSelected: TListResponse = {
+        const itemSelected: TListResponse = {
             title: '',
             listType: 0,
             singleSelectReply: {
@@ -577,7 +577,7 @@ const manageChat = {
             // validando mensagem recebidat
             if (itemSelected) {
                 // preenchendo ordem
-                let order: TOrder = {
+                const order: TOrder = {
                     title: itemSelected.title,
                     price: itemSelected.price,
                     description: itemSelected.description,
@@ -704,14 +704,14 @@ const manageChat = {
     async orderEnd(message: Message, client: Whatsapp) {
         seeTyping(client, message.from)
         // recuperando os dados tempotais de chatControll
-        const documentData = await chatControll.getDocumetId(message.chatId)
-        const tempData: TDataTemp = documentData!.data()
+        const documentReferemces = await chatControll.getDocumetId(message.chatId)
+        const documentData: TDataTemp = documentReferemces!.data()
         // atulalizando collection customer com os dados do endereço
-        customerControll.updateDoc(message.chatId, 'address', tempData.tempAddress)
+        customerControll.updateDoc(message.chatId, 'address', documentData.tempAddress)
         // inserindo dados do podido na collection order
         const data = {
             idCustomer: message.chatId,
-            orderList: tempData.tempOrderList
+            orderList: documentData.tempOrderList
         }
         const idOrder = await orderControll.insertDoc(data)
         console.log('idOrder: ', idOrder)
